@@ -44,7 +44,6 @@ import java.text.DecimalFormat
 @PageTitle("Editar")
 @HtmlImport("frontend://styles/shared-styles.html")
 class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
-  private val storeno : Int= 4
   private lateinit var edtFoneCli: TextField
   private lateinit var edtNome: TextField
   private lateinit var edtCodigo: TextField
@@ -52,7 +51,7 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
   private lateinit var edtVendedor: TextField
   private lateinit var edtHora: TextField
   private lateinit var edtData: TextField
-  private lateinit var edtLoja: TextField
+  private lateinit var edtLoja: IntegerField
   private lateinit var lblGravado: Label
   private var gridProduto: Grid<ProdutoPedido>
   private lateinit var edtPedido: IntegerField
@@ -75,10 +74,9 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
       }
       formItem("Loja") {
         colspan = 2
-        edtLoja = textField() {
-          value = "MF"
+        edtLoja = integerField() {
+          value = 4
           width = "8em"
-          isReadOnly = true
         }
       }
       formItem("Orçamento") {
@@ -196,7 +194,7 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
   override val numPedido: Int
     get() = edtPedido.value ?: 0
   override val numLoja: Int
-    get() = storeno
+    get() = edtPedido.value ?: 0
   override val produtos: List<ProdutoPedido>
     get() = dataProviderProdutos.items.toList()
   
