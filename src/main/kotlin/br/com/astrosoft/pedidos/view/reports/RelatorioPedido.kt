@@ -29,7 +29,7 @@ class RelatorioPedido(val pedido: Pedido) {
   val colDescricao =
     col.column("Descrição", ProdutoPedido::descricao.name, type.stringType())
       .apply {
-        this.setFixedWidth(160)
+        this.setFixedWidth(200)
       }
   val colGrade =
     col.column("Grade", ProdutoPedido::grade.name, type.stringType())
@@ -57,7 +57,7 @@ class RelatorioPedido(val pedido: Pedido) {
     col.column("R$ Total", ProdutoPedido::vlTotal.name, type.doubleType())
       .apply {
         this.setPattern("#,##0.00")
-        this.setFixedWidth(150)
+        this.setFixedWidth(100)
       }
   
   fun build(): ByteArray {
@@ -108,21 +108,21 @@ class RelatorioPedido(val pedido: Pedido) {
             cmp.horizontalList()
               .add(
                 cmp.text("Data/Hora:"),
-                cmp.text("${pedido.data.format()}"),
-                cmp.text("${pedido.hora.format()}"),
+                cmp.text(pedido.data.format()),
+                cmp.text(pedido.hora.format()),
                 cmp.text("Vendedor:"),
-                cmp.text("${pedido.vendedor} "),
+                cmp.text(pedido.vendedor).setFixedWidth(150),
                 cmp.text("Fone:"),
-                cmp.text("${pedido.telVend}")
+                cmp.text(pedido.telVend)
                   ),
             cmp.horizontalList()
               .add(
                 cmp.text("Cliente:"),
-                cmp.text("${pedido.codigo}"),
-                cmp.text("${pedido.cliente}")
-                  .setFixedWidth(200),
+                cmp.text(pedido.codigo),
+                cmp.text(pedido.cliente)
+                  .setFixedWidth(250),
                 cmp.text("Fone:"),
-                cmp.text("${pedido.telCliente}")
+                cmp.text(pedido.telCliente)
                   )
               )
           )

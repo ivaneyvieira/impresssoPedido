@@ -11,7 +11,7 @@ SELECT O.storeno                                                                
        C.name                                                                                    AS cliente,
        cast(IF(C.celular = 0, IF(MID(C.tel, 1, 10) = 0, '', MID(C.tel, 1, 10)),
 	       C.celular) AS CHAR)                                                               AS telCliente,
-       M.sname                                                                                   AS metodo
+       M.name                                                                                    AS metodo
 FROM sqldados.eord         AS O
   LEFT JOIN sqldados.emp   AS V
 	      ON O.empno = V.no
