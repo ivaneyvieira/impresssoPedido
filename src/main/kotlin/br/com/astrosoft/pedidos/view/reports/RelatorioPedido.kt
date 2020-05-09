@@ -3,19 +3,26 @@ package br.com.astrosoft.pedidos.view.reports
 import br.com.astrosoft.framework.util.format
 import br.com.astrosoft.pedidos.model.beans.Pedido
 import br.com.astrosoft.pedidos.model.beans.ProdutoPedido
+import net.sf.dynamicreports.report.base.expression.AbstractSimpleExpression
+import net.sf.dynamicreports.report.builder.DynamicReports
 import net.sf.dynamicreports.report.builder.DynamicReports.cmp
 import net.sf.dynamicreports.report.builder.DynamicReports.col
 import net.sf.dynamicreports.report.builder.DynamicReports.report
 import net.sf.dynamicreports.report.builder.DynamicReports.sbt
 import net.sf.dynamicreports.report.builder.DynamicReports.type
+import net.sf.dynamicreports.report.builder.DynamicReports.*
+import net.sf.dynamicreports.report.builder.VariableBuilder
 import net.sf.dynamicreports.report.builder.column.ColumnBuilder
 import net.sf.dynamicreports.report.builder.component.ComponentBuilder
+import net.sf.dynamicreports.report.builder.style.PenBuilder
 import net.sf.dynamicreports.report.builder.subtotal.SubtotalBuilder
+import net.sf.dynamicreports.report.constant.Calculation
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment.CENTER
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment.RIGHT
+import net.sf.dynamicreports.report.constant.ListType.HORIZONTAL_FLOW
 import net.sf.dynamicreports.report.constant.Position.LEFT
-import net.sf.dynamicreports.report.constant.Position.TOP
+import net.sf.dynamicreports.report.definition.ReportParameters
 import net.sf.dynamicreports.report.exception.DRException
 import java.io.ByteArrayOutputStream
 
@@ -70,6 +77,7 @@ class RelatorioPedido(val pedido: Pedido) {
         .subtotalsAtSummary(* subtotalBuilder().toTypedArray())
         .setDataSource(dataSource())
         .summary(pageFooterBuilder())
+        .setSubtotalStyle(stl.style().setTopBorder(stl.pen1Point()))
         .setTemplate(Templates.reportTemplate)
         .toPdf(outputStream)
       outputStream.toByteArray()
@@ -83,13 +91,12 @@ class RelatorioPedido(val pedido: Pedido) {
     return cmp.verticalList()
       .add(
         cmp.text(""),
-        cmp.line(),
         cmp.horizontalList()
           .add(
             cmp.text("OBS:")
               .setFixedWidth(30),
             cmp.text(pedido.observacao)
-              .setFixedWidth(250),
+              .setFixedWidth(300),
             cmp.text("Método de pagamento: ${pedido.metodo}")
               .setHorizontalTextAlignment(RIGHT)
               )
@@ -142,9 +149,17 @@ class RelatorioPedido(val pedido: Pedido) {
   }
   
   private fun subtotalBuilder(): List<SubtotalBuilder<*, *>> {
-    return listOf(sbt.sum(vlTotal)
-                    .setLabel("Valor total R$")
-                    .setLabelPosition(LEFT))
+    return listOf(
+      sbt.text("", colCodigo),
+      sbt.text("", colDescricao),
+      sbt.text("", colGrade),
+      sbt.text("", colUn),
+      sbt.text("", colQtd),
+      sbt.text("", colVlUnit),
+      sbt.sum(vlTotal)
+        .setLabel("Total R$")
+        .setLabelStyle(stl.style().setTopBorder(stl.pen1Point()))
+        .setLabelPosition(LEFT))
   }
   
   private fun columnBuilder(): List<ColumnBuilder<*, *>> {
@@ -156,3 +171,12 @@ class RelatorioPedido(val pedido: Pedido) {
   }
 }
 
+private class CustomTextSubtotal(private val total: VariableBuilder<Double>):
+  AbstractSimpleExpression<String?>() {
+  override fun evaluate(reportParameters: ReportParameters): String {
+    val totalValue = reportParameters.getValue(total)
+    
+    return "Valor total do Orçamento R$... " + type.doubleType()
+      .valueToString(total, reportParameters)
+  }
+}
