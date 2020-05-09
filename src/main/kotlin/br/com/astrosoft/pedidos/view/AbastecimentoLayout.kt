@@ -4,20 +4,15 @@ import br.com.astrosoft.framework.model.RegistryUserInfo
 import com.github.appreciated.app.layout.behaviour.AppLayout
 import com.github.appreciated.app.layout.behaviour.Behaviour.LEFT_RESPONSIVE
 import com.github.appreciated.app.layout.builder.AppLayoutBuilder
-import com.github.appreciated.app.layout.component.appbar.AppBarBuilder
 import com.github.appreciated.app.layout.component.menu.left.builder.LeftAppMenuBuilder
 import com.github.appreciated.app.layout.component.menu.left.items.LeftHeaderItem
 import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigationItem
-import com.github.appreciated.app.layout.component.menu.top.item.TopClickableItem
 import com.github.appreciated.app.layout.entity.Section
 import com.github.appreciated.app.layout.router.AppLayoutRouterLayout
-import com.github.mvysny.karibudsl.v10.navigateToView
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.html.Hr
 import com.vaadin.flow.component.icon.VaadinIcon
-import com.vaadin.flow.component.icon.VaadinIcon.CLOSE_CIRCLE
 import com.vaadin.flow.component.icon.VaadinIcon.EDIT
-import com.vaadin.flow.component.icon.VaadinIcon.USER
 import com.vaadin.flow.component.page.Push
 import com.vaadin.flow.server.PWA
 import com.vaadin.flow.theme.Theme
@@ -42,10 +37,6 @@ class AbastecimentoLayout: AppLayoutRouterLayout() {
   private fun appLayout(title: String, appMenu: Component): AppLayout {
     return AppLayoutBuilder.get(LEFT_RESPONSIVE)
       .withTitle(title)
-      .withAppBar(AppBarBuilder.get().add(TopClickableItem(null, CLOSE_CIRCLE.create()) {
-        LoginService.logout()
-        navigateToView(DefaultView::class)
-      }).build())
       .withAppMenu(appMenu)
       .build()
   }
@@ -74,10 +65,8 @@ class AbastecimentoLayout: AppLayoutRouterLayout() {
     
     fun appMenu(): Component {
       val appMenu = headerMenu(RegistryUserInfo.commpany, "Versão ${RegistryUserInfo.version}")
-      menuEditar = addMenu("Editar", EDIT, EditarView::class)
-      menuUsuario = addMenu("Usuários", USER, UsuarioView::class)
+      menuEditar = addMenu("Editar", EDIT, PedidoView::class)
       appMenu.add(menuEditar)
-      appMenu.add(menuUsuario)
       menuComponent = appMenu.build()
       return menuComponent!!
     }

@@ -1,63 +1,25 @@
 package br.com.astrosoft.pedidos.model
 
-import br.com.astrosoft.pedidos.model.beans.Pedido
-import br.com.astrosoft.pedidos.model.beans.Produto
-import br.com.astrosoft.pedidos.model.beans.ProdutoPedido
-import br.com.astrosoft.pedidos.model.beans.Relatorio
-import br.com.astrosoft.pedidos.model.beans.UserSaci
 import br.com.astrosoft.framework.model.QueryDB
 import br.com.astrosoft.framework.util.DB
+import br.com.astrosoft.pedidos.model.beans.Pedido
+import br.com.astrosoft.pedidos.model.beans.ProdutoPedido
 
 class QuerySaci: QueryDB(driver, url, username, password) {
-  fun findUser(login: String?): UserSaci? {
-    login ?: return null
-    val sql = "/sqlSaci/userSenha.sql"
-    return query(sql) {q ->
-      q.addParameter("login", login)
-        .executeAndFetch(UserSaci::class.java)
-        .firstOrNull()
-        ?.initVars()
-    }
-  }
-  
-  fun findAllUser(): List<UserSaci> {
-    val sql = "/sqlSaci/userSenha.sql"
-    return query(sql) {q ->
-      q.addParameter("login", "TODOS")
-        .executeAndFetch(UserSaci::class.java)
-        .map {user ->
-          user.initVars()
-        }
-    }
-  }
-  
-  fun updateUser(user: UserSaci) {
-    val sql = "/sqlSaci/updateUser.sql"
-    script(sql) {q ->
-      q.addOptionalParameter("login", user.login)
-      q.addOptionalParameter("bitAcesso", user.bitAcesso())
-      q.addOptionalParameter("abreviacoes", user.abreviacoes)
-      q.executeUpdate()
-    }
-  }
-  
-  fun listaProduto(ordno: Int): List<ProdutoPedido> {
-    val storeno = 4
+  fun listaProduto(storeno: Int, ordno: Int): List<ProdutoPedido> {
     val sql = "/sqlSaci/listaProdutos.sql"
     val lista = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("ordno", ordno)
       q.executeAndFetch(ProdutoPedido::class.java)
     }
-    lista.forEach {produto ->
-      produto.qttyEdit = produto.qtty.toInt()
-    }
+    
     return lista
   }
   
-  fun listaPedido(ordno: Int?): Pedido? {
+  fun listaPedido(storeno: Int?, ordno: Int?): Pedido? {
     ordno ?: return null
-    val storeno = 4
+    storeno ?: return null
     val sql = "/sqlSaci/listaPedidos.sql"
     
     return query(sql) {q ->
@@ -65,14 +27,6 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addParameter("ordno", ordno)
       q.executeAndFetch(Pedido::class.java)
         .firstOrNull()
-    }
-  }
-  
-  fun findProduto(prdno: String): List<Produto> {
-    val sql = "/sqlSaci/findProduto.sql"
-    return query(sql) {q ->
-      q.addOptionalParameter("prdno", prdno)
-      q.executeAndFetch(Produto::class.java)
     }
   }
   
@@ -108,16 +62,6 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun listaRelatorio(ordno: Int): List<Relatorio> {
-    val sql = "/sqlSaci/relatorio.sql"
-    val storeno = 4
-    return query(sql) {q ->
-      q.addOptionalParameter("storeno", storeno)
-      q.addOptionalParameter("ordno", ordno)
-      q.executeAndFetch(Relatorio::class.java)
-    }
-  }
-  
   companion object {
     private val db = DB("saci")
     internal val driver = db.driver
@@ -132,3 +76,6 @@ class QuerySaci: QueryDB(driver, url, username, password) {
 }
 
 val saci = QuerySaci()
+
+
+

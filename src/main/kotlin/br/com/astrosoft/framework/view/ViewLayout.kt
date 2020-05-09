@@ -1,16 +1,18 @@
 package br.com.astrosoft.framework.view
 
-import br.com.astrosoft.pedidos.model.beans.UserSaci
-import br.com.astrosoft.pedidos.model.saci
-import br.com.astrosoft.pedidos.view.LoginService
-import br.com.astrosoft.framework.model.RegistryUserInfo
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
 import com.github.mvysny.karibudsl.v10.KFormLayout
 import com.github.mvysny.karibudsl.v10.em
 import com.github.mvysny.karibudsl.v10.formLayout
+import com.github.mvysny.karibudsl.v10.h1
+import com.github.mvysny.karibudsl.v10.h3
 import com.github.mvysny.karibudsl.v10.horizontalLayout
 import com.github.mvysny.karibudsl.v10.isExpand
+import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.orderedlayout.FlexComponent
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.AfterNavigationEvent
@@ -30,8 +32,6 @@ abstract class ViewLayout<VM: ViewModel<*>>: VerticalLayout(), IView, BeforeLeav
     width = "100%"
     height = "100%"
   }
-  
-  abstract fun isAccept(user: UserSaci): Boolean
   
   override fun showError(msg: String) {
     ConfirmDialog.createError()
@@ -73,28 +73,24 @@ abstract class ViewLayout<VM: ViewModel<*>>: VerticalLayout(), IView, BeforeLeav
   }
   
   override fun beforeEnter(event: BeforeEnterEvent?) {
-    if(!LoginService.isLogged())
-      event?.forwardTo(LoginView::class.java)
-    else {
-      saci.findUser(RegistryUserInfo.usuario)
-        ?.let {usuario ->
-          if(!isAccept(usuario))
-            event?.rerouteTo(AccessNotAllowed::class.java)
-        }
-    }
   }
   
   override fun afterNavigation(event: AfterNavigationEvent?) {
     //   loginForm.isOpened = LoginService.isLogged() == false
   }
   
-  fun VerticalLayout.form(title: String, componentes: KFormLayout.() -> Unit = {}) {
+  fun VerticalLayout.form(title: String, toolBar: Component, componentes: KFormLayout.() -> Unit = {}) {
+    horizontalLayout {
+      setWidthFull()
+      h3(title)
+      horizontalLayout {
+        isExpand = true
+        this.justifyContentMode = FlexComponent.JustifyContentMode.END
+        add(toolBar)
+      }
+    }
     formLayout {
       isExpand = true
-  
-      em(title) {
-        colspan = 2
-      }
       componentes()
     }
   }
