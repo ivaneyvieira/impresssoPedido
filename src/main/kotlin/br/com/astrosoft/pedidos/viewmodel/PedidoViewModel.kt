@@ -14,16 +14,26 @@ class PedidoViewModel(view: IPedidoView): ViewModel<IPedidoView>(view) {
     return saci.listaPedido(view.numLoja, view.numPedido)
   }
   
-  fun imprimir() = exec {
+  fun preview() = exec {
+    val byteArray = buildRelatorio()
+    view.showRelatorio(byteArray)
+  }
+  
+  private fun buildRelatorio(): ByteArray {
     val pedido = findPedidos() ?: fail("Pedido não encontrado")
     val relatorio = RelatorioPedido(pedido)
     val byteArray = relatorio.build()
-    view.showRelatorio(byteArray)
+    return byteArray
   }
   
   fun updateGrid(numLoja: Int?, numPedido: Int?) {
     val pedido = saci.listaPedido(numLoja, numPedido)
     view.updateGrid(pedido)
+  }
+  
+  fun download() {
+    val byteArray = buildRelatorio()
+    view.downloadPdf(byteArray)
   }
 }
 
@@ -35,4 +45,6 @@ interface IPedidoView: IView {
   fun updateGrid(pedido: Pedido?)
   
   fun showRelatorio(byteArray : ByteArray)
+  
+  fun downloadPdf(byteArray : ByteArray)
 }

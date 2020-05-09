@@ -1,7 +1,6 @@
 package br.com.astrosoft.pedidos.view
 
 import br.com.astrosoft.framework.util.format
-import br.com.astrosoft.framework.util.toDate
 import br.com.astrosoft.framework.view.SubWindowPDF
 import br.com.astrosoft.pedidos.model.beans.ProdutoPedido
 import br.com.astrosoft.pedidos.viewmodel.PedidoViewModel
@@ -26,6 +25,7 @@ import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridSortOrder
 import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
 import com.vaadin.flow.component.html.Label
+import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.component.textfield.TextField
@@ -60,9 +60,16 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
   
   init {
     val toolBar = HorizontalLayout().apply {
-      button("Imprime") {
+      button("Visualizar") {
+        icon = VaadinIcon.SEARCH.create()
         onLeftClick {
-          viewModel.imprimir()
+          viewModel.preview()
+        }
+      }
+      button("Baixar"){
+        icon = VaadinIcon.DOWNLOAD.create()
+        onLeftClick {
+          viewModel.download()
         }
       }
     }
@@ -213,5 +220,9 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
   
   override fun showRelatorio(byteArray: ByteArray) {
     SubWindowPDF(byteArray).open()
+  }
+  
+  override fun downloadPdf(byteArray: ByteArray) {
+    
   }
 }
