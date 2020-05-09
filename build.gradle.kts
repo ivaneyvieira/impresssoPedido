@@ -81,9 +81,12 @@ dependencies {
   testCompile("com.github.mvysny.kaributesting:karibu-testing-v10:1.1.16")
   testCompile("com.github.mvysny.dynatest:dynatest-engine:0.15")
   // https://mvnrepository.com/artifact/net.sourceforge.dynamicreports/dynamicreports-core
-  compile("net.sourceforge.dynamicreports:dynamicreports-core:6.11.1"){
+  compile("net.sourceforge.dynamicreports:dynamicreports-core:6.11.1") {
     exclude(group = "com.lowagie", module = "itext")
   }
+  // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-fonts
+  compile("net.sf.jasperreports:jasperreports-fonts:6.11.0'")
+  
   compile("com.lowagie:itext:2.1.7")
   compile("javax.xml.bind:jaxb-api:2.3.1")
 }
