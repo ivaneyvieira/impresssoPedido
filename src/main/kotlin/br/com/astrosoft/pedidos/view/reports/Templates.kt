@@ -166,7 +166,6 @@ object Templates {
         .setHorizontalTextAlignment(LEFT)
     subtotalStyle =
       DynamicReports.stl.style(boldStyle)
-        .setTopBorder(DynamicReports.stl.pen1Point())
     val crosstabGroupStyle =
       DynamicReports.stl.style(columnTitleStyle)
     val crosstabGroupTotalStyle =
