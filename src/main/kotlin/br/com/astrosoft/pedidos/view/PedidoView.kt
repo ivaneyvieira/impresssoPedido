@@ -68,6 +68,7 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
       }
       button("Baixar"){
         icon = VaadinIcon.DOWNLOAD.create()
+        isVisible = false
         onLeftClick {
           viewModel.download()
         }
@@ -223,6 +224,6 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
   }
   
   override fun downloadPdf(byteArray: ByteArray) {
-    
+  
   }
 }
