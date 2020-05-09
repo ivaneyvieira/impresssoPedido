@@ -80,12 +80,19 @@ class RelatorioPedido(val pedido: Pedido) {
   }
   
   private fun pageFooterBuilder(): ComponentBuilder<*, *>? {
-    return cmp.horizontalList()
+    return cmp.verticalList()
       .add(
-        cmp.text("OBS:"),
-        cmp.text(pedido.observacao).setFixedWidth(250),
-        cmp.text("Método de pagamento: ${pedido.metodo}")
-          .setHorizontalTextAlignment(RIGHT)
+        cmp.text(""),
+        cmp.line(),
+        cmp.horizontalList()
+          .add(
+            cmp.text("OBS:")
+              .setFixedWidth(30),
+            cmp.text(pedido.observacao)
+              .setFixedWidth(250),
+            cmp.text("Método de pagamento: ${pedido.metodo}")
+              .setHorizontalTextAlignment(RIGHT)
+              )
           )
   }
   
@@ -112,7 +119,8 @@ class RelatorioPedido(val pedido: Pedido) {
                 cmp.text(pedido.data.format()),
                 cmp.text(pedido.hora.format()),
                 cmp.text("Vendedor:"),
-                cmp.text(pedido.vendedor).setFixedWidth(150),
+                cmp.text(pedido.vendedor)
+                  .setFixedWidth(150),
                 cmp.text("Fone:"),
                 cmp.text(pedido.telVend)
                   ),

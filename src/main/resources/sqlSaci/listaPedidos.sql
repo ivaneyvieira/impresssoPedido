@@ -1,5 +1,6 @@
 SELECT O.storeno                                                                                 AS loja,
-       ordno                                                                                     AS numPedido,
+       O.ordno
+         AS numPedido,
        IFNULL(S.sname, '')                                                                       AS sigla,
        CAST(O.date AS DATE)                                                                      AS data,
        SEC_TO_TIME(O.l4)                                                                         AS hora,
