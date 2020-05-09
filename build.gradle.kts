@@ -85,7 +85,7 @@ dependencies {
     exclude(group = "com.lowagie", module = "itext")
   }
   // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-fonts
-  compile("net.sf.jasperreports:jasperreports-fonts:6.11.0")
+  compile("net.sf.jasperreports:jasperreports-fonts:6.12.2")
   
   compile("com.lowagie:itext:2.1.7")
   compile("javax.xml.bind:jaxb-api:2.3.1")
