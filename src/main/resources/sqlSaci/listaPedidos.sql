@@ -1,14 +1,17 @@
-SELECT O.storeno                                                                      AS loja,
-       ordno                                                                          AS numPedido,
-       IFNULL(S.sname, '')                                                            AS sigla,
-       CAST(O.date AS DATE)                                                           AS data,
-       SEC_TO_TIME(O.l4)                                                              AS hora,
-       TRIM(MID(V.sname, 1, locate('   ', RPAD(V.sname, 30, ' '))))                   AS vendedor,
-       IF(V.celular = 0, if(V.tel = 0, '', V.tel), V.celular)                         AS telVend,
-       C.no                                                                           AS codigo,
-       C.name                                                                         AS cliente,
-       IF(C.celular = 0, IF(MID(C.tel, 1, 10) = 0, '', MID(C.tel, 1, 10)), C.celular) AS telCliente,
-       M.sname                                                                        AS metodo
+SELECT O.storeno                                                                                 AS loja,
+       ordno                                                                                     AS numPedido,
+       IFNULL(S.sname, '')                                                                       AS sigla,
+       CAST(O.date AS DATE)                                                                      AS data,
+       SEC_TO_TIME(O.l4)                                                                         AS hora,
+       TRIM(MID(V.sname, 1,
+		locate('   ', RPAD(V.sname, 30, ' '))))                                          AS vendedor,
+       cast(
+	 IF(V.celular = 0, if(V.tel = 0, '', V.tel), V.celular) AS CHAR)                         AS telVend,
+       cast(C.no AS CHAR)                                                                        AS codigo,
+       C.name                                                                                    AS cliente,
+       cast(IF(C.celular = 0, IF(MID(C.tel, 1, 10) = 0, '', MID(C.tel, 1, 10)),
+	       C.celular) AS CHAR)                                                               AS telCliente,
+       M.sname                                                                                   AS metodo
 FROM sqldados.eord         AS O
   LEFT JOIN sqldados.emp   AS V
 	      ON O.empno = V.no
