@@ -15,7 +15,8 @@ data class Pedido(
   val codigo: String,
   val cliente: String,
   val telCliente: String,
-  val metodo: String
+  val metodo: String,
+  val observacao : String
                  ) {
   val produtos
     get() = saci.listaProduto(loja, numPedido)
