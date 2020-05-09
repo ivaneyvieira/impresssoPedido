@@ -83,6 +83,7 @@ class RelatorioPedido(val pedido: Pedido) {
     return cmp.horizontalList()
       .add(
         cmp.text("OBS:"),
+        cmp.text(pedido.observacao).setFixedWidth(250),
         cmp.text("Método de pagamento: ${pedido.metodo}")
           .setHorizontalTextAlignment(RIGHT)
           )

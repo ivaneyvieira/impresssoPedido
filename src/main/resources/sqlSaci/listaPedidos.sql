@@ -11,7 +11,16 @@ SELECT O.storeno                                                                
        C.name                                                                                    AS cliente,
        cast(IF(C.celular = 0, IF(MID(C.tel, 1, 10) = 0, '', MID(C.tel, 1, 10)),
 	       C.celular) AS CHAR)                                                               AS telCliente,
-       M.name                                                                                    AS metodo
+       M.name
+         AS metodo,
+       cast(TRIM(TRAILING '\n' FROM CONCAT(TRIM(MID(remarks__480, 1, 40)), '\n',
+					   TRIM(MID(remarks__480, 41, 40)), '\n',
+					   TRIM(MID(remarks__480, 81, 40)), '\n',
+					   TRIM(MID(remarks__480, 121, 40)), '\n',
+					   TRIM(MID(remarks__480, 161, 40)), '\n',
+					   TRIM(MID(remarks__480, 201, 40)), '\n',
+					   TRIM(MID(remarks__480, 241, 40)), '\n',
+					   TRIM(MID(remarks__480, 281, 40)))) as char) as observacao
 FROM sqldados.eord         AS O
   LEFT JOIN sqldados.emp   AS V
 	      ON O.empno = V.no
@@ -21,5 +30,8 @@ FROM sqldados.eord         AS O
 	      ON C.no = O.custno
   LEFT JOIN sqldados.paym  AS M
 	      ON M.no = O.paymno
+LEFT JOIN sqldados.eordrk AS OB
+ON OB.ordno = O.ordno
+AND OB.storeno = O.storeno
 WHERE O.ordno = :ordno
   AND O.storeno = :storeno
