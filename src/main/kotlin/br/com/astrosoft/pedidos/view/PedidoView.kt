@@ -194,7 +194,7 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
   override val numPedido: Int
     get() = edtPedido.value ?: 0
   override val numLoja: Int
-    get() = edtPedido.value ?: 0
+    get() = edtLoja.value ?: 0
   override val produtos: List<ProdutoPedido>
     get() = dataProviderProdutos.items.toList()
   
