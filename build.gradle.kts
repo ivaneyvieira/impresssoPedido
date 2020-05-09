@@ -51,9 +51,9 @@ dependencies {
   compile("com.vaadin:vaadin-core:${vaadin.version}")
   compile("com.vaadin:flow-server-compatibility-mode:2.0.10")
   compile("javax.servlet:javax.servlet-api:3.1.0")
-
+  
   compile("org.claspina:confirm-dialog:2.0.0")
-
+  
   compile("ch.qos.logback:logback-classic:1.2.3")
   compile("org.slf4j:slf4j-api:1.7.25")
   compile("org.slf4j:jul-to-slf4j:1.7.25")
@@ -80,6 +80,12 @@ dependencies {
   // test support
   testCompile("com.github.mvysny.kaributesting:karibu-testing-v10:1.1.16")
   testCompile("com.github.mvysny.dynatest:dynatest-engine:0.15")
+  // https://mvnrepository.com/artifact/net.sourceforge.dynamicreports/dynamicreports-core
+  compile("net.sourceforge.dynamicreports:dynamicreports-core:6.11.1"){
+    exclude(group = "com.lowagie", module = "itext")
+  }
+  compile("com.lowagie:itext:2.1.7")
+  compile("javax.xml.bind:jaxb-api:2.3.1")
 }
 
 tasks.withType<KotlinCompile> {

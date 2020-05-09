@@ -6,6 +6,14 @@ import com.zaxxer.hikari.HikariDataSource
 import org.sql2o.Connection
 import org.sql2o.Query
 import org.sql2o.Sql2o
+import org.sql2o.converters.Converter
+import org.sql2o.converters.ConverterException
+import org.sql2o.quirks.NoQuirks
+import java.sql.Date
+import java.sql.Time
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneOffset
 
 open class QueryDB(driver: String, url: String, username: String, password: String) {
   private val sql2o: Sql2o
@@ -22,8 +30,10 @@ open class QueryDB(driver: String, url: String, username: String, password: Stri
     config.isAutoCommit = false
     val ds = HikariDataSource(config)
     ds.maximumPoolSize = 5
-  
-    this.sql2o = Sql2o(url, username, password)
+    val maps = HashMap<Class<*>, Converter<*>>()
+    maps[LocalDate::class.java] = LocalDateConverter()
+    maps[LocalTime::class.java] = LocalSqlTimeConverter()
+    this.sql2o = Sql2o(url, username, password, NoQuirks(maps))
   }
   
   private fun registerDriver(driver: String) {
@@ -90,5 +100,49 @@ open class QueryDB(driver: String, url: String, username: String, password: Stri
         block(con)
         con.commit()
       }
+  }
+}
+
+class LocalDateConverter: Converter<LocalDate?> {
+  @Throws(ConverterException::class)
+  override fun convert(`val`: Any?): LocalDate? {
+    return if(`val` is Date) {
+      `val`.toLocalDate()
+    }
+    else {
+      null
+    }
+  }
+  
+  override fun toDatabaseParam(`val`: LocalDate?): Any? {
+    return if(`val` == null) {
+      null
+    }
+    else {
+      Date(`val`.atStartOfDay()
+             .toInstant(ZoneOffset.UTC)
+             .toEpochMilli())
+    }
+  }
+}
+
+class LocalSqlTimeConverter: Converter<LocalTime?> {
+  @Throws(ConverterException::class)
+  override fun convert(`val`: Any?): LocalTime? {
+    return if(`val` is Time) {
+      `val`.toLocalTime()
+    }
+    else {
+      null
+    }
+  }
+  
+  override fun toDatabaseParam(`val`: LocalTime?): Any? {
+    return if(`val` == null) {
+      null
+    }
+    else {
+      Time.valueOf(`val`)
+    }
   }
 }

@@ -1,6 +1,5 @@
 package br.com.astrosoft.pedidos.view
 
-import br.com.astrosoft.pedidos.model.beans.UserSaci
 import br.com.astrosoft.pedidos.viewmodel.DefautlViewModel
 import br.com.astrosoft.pedidos.viewmodel.IDefaultView
 import br.com.astrosoft.framework.view.ViewLayout
@@ -14,11 +13,8 @@ class DefaultView: ViewLayout<DefautlViewModel>(), IDefaultView {
   override val viewModel = DefautlViewModel(this)
   
   override fun beforeEnter(event: BeforeEnterEvent?) {
-    event?.forwardTo(EditarView::class.java)
+    event?.forwardTo(PedidoView::class.java)
     super.beforeEnter(event)
   }
-  
-  override fun isAccept(user: UserSaci): Boolean {
-    return true
-  }
+
 }
