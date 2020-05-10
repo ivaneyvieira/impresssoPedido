@@ -1,13 +1,12 @@
 package br.com.astrosoft.pedidos.viewmodel
 
-import br.com.astrosoft.pedidos.model.beans.Pedido
-import br.com.astrosoft.pedidos.model.beans.ProdutoPedido
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.framework.viewmodel.fail
+import br.com.astrosoft.pedidos.model.beans.Pedido
+import br.com.astrosoft.pedidos.model.beans.ProdutoPedido
 import br.com.astrosoft.pedidos.model.saci
 import br.com.astrosoft.pedidos.view.reports.RelatorioPedido
-
 
 class PedidoViewModel(view: IPedidoView): ViewModel<IPedidoView>(view) {
   private fun findPedidos(): Pedido? {
@@ -15,12 +14,12 @@ class PedidoViewModel(view: IPedidoView): ViewModel<IPedidoView>(view) {
   }
   
   fun preview() = exec {
-    val byteArray = buildRelatorio()
-    view.showRelatorio(byteArray)
+    val pedido = findPedidos() ?: fail("Pedido não encontrado")
+    val byteArray = buildRelatorio(pedido)
+    view.showRelatorio(pedido, byteArray)
   }
   
-  private fun buildRelatorio(): ByteArray {
-    val pedido = findPedidos() ?: fail("Pedido não encontrado")
+  private fun buildRelatorio(pedido: Pedido): ByteArray {
     val relatorio = RelatorioPedido(pedido)
     val byteArray = relatorio.build()
     return byteArray
@@ -32,8 +31,9 @@ class PedidoViewModel(view: IPedidoView): ViewModel<IPedidoView>(view) {
   }
   
   fun download() {
-    val byteArray = buildRelatorio()
-    view.downloadPdf(byteArray)
+    val pedido = findPedidos() ?: fail("Pedido não encontrado")
+    val byteArray = buildRelatorio(pedido)
+    view.downloadPdf(pedido, byteArray)
   }
 }
 
@@ -44,7 +44,7 @@ interface IPedidoView: IView {
   
   fun updateGrid(pedido: Pedido?)
   
-  fun showRelatorio(byteArray : ByteArray)
+  fun showRelatorio(pedido: Pedido, byteArray: ByteArray)
   
-  fun downloadPdf(byteArray : ByteArray)
+  fun downloadPdf(pedido: Pedido, byteArray: ByteArray)
 }

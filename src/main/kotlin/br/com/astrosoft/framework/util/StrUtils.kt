@@ -1,11 +1,22 @@
 package br.com.astrosoft.framework.util
 
+import java.text.DecimalFormat
+
+fun Double.format(pattern: String): String {
+  val decimalFormat = DecimalFormat(pattern)
+  return decimalFormat.format(this) ?: ""
+}
+
+fun Double.format(): String {
+  return this.format("0.00")
+}
+
 fun String?.lpad(size: Int, filler: String): String {
   var str = this ?: ""
   if(str.length > size) return str.substring(0, size)
   val buf = StringBuilder(str)
   while(buf.length < size) buf.insert(0, filler)
-
+  
   str = buf.toString()
   return str
 }

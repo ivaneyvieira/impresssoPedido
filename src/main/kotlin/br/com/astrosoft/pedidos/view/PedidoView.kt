@@ -2,21 +2,23 @@ package br.com.astrosoft.pedidos.view
 
 import br.com.astrosoft.framework.util.format
 import br.com.astrosoft.framework.view.SubWindowPDF
-import br.com.astrosoft.pedidos.model.beans.ProdutoPedido
-import br.com.astrosoft.pedidos.viewmodel.PedidoViewModel
-import br.com.astrosoft.pedidos.viewmodel.IPedidoView
 import br.com.astrosoft.framework.view.ViewLayout
 import br.com.astrosoft.pedidos.model.beans.Pedido
+import br.com.astrosoft.pedidos.model.beans.ProdutoPedido
+import br.com.astrosoft.pedidos.viewmodel.IPedidoView
+import br.com.astrosoft.pedidos.viewmodel.PedidoViewModel
 import com.github.mvysny.karibudsl.v10.addColumnFor
 import com.github.mvysny.karibudsl.v10.button
 import com.github.mvysny.karibudsl.v10.formItem
 import com.github.mvysny.karibudsl.v10.getColumnBy
 import com.github.mvysny.karibudsl.v10.grid
 import com.github.mvysny.karibudsl.v10.horizontalLayout
+import com.github.mvysny.karibudsl.v10.html
 import com.github.mvysny.karibudsl.v10.integerField
 import com.github.mvysny.karibudsl.v10.isExpand
 import com.github.mvysny.karibudsl.v10.onLeftClick
 import com.github.mvysny.karibudsl.v10.responsiveSteps
+import com.github.mvysny.karibudsl.v10.textAlign
 import com.github.mvysny.karibudsl.v10.textField
 import com.vaadin.flow.component.dependency.HtmlImport
 import com.vaadin.flow.component.grid.ColumnTextAlign.END
@@ -44,6 +46,7 @@ import java.text.DecimalFormat
 @PageTitle("Editar")
 @HtmlImport("frontend://styles/shared-styles.html")
 class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
+  private lateinit var labelTotal: Label
   private lateinit var edtFoneCli: TextField
   private lateinit var edtNome: TextField
   private lateinit var edtCodigo: TextField
@@ -125,7 +128,7 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
       formItem("Fone") {
         colspan = 2
         edtFoneVen = textField() {
-          width = "8em"
+          width = "16em"
           isReadOnly = true
         }
       }
@@ -145,7 +148,7 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
       formItem("Fone") {
         colspan = 2
         edtFoneCli = textField() {
-          width = "8em"
+          width = "16em"
           isReadOnly = true
         }
       }
@@ -155,7 +158,11 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
       isMultiSort = true
       addThemeVariants(LUMO_COMPACT)
       setSelectionMode(SelectionMode.SINGLE)
-      
+  
+      labelTotal = Label().apply {
+        this.textAlign = "right"
+      }
+  
       addColumnFor(ProdutoPedido::codigo) {
         setHeader("Código")
         flexGrow = 1
@@ -188,6 +195,7 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
         setHeader("R$ Total")
         flexGrow = 1
         this.textAlign = END
+        this.setFooter(labelTotal)
       }
       
       sort(listOf(
@@ -210,20 +218,24 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
     edtData.value = pedido?.data.format()
     edtHora.value = pedido?.hora.format()
     edtVendedor.value = pedido?.vendedor ?: ""
-    edtFoneVen.value = pedido?.telVend ?: ""
+    edtFoneVen.value = pedido?.telVendFormatado ?: ""
     edtCodigo.value = pedido?.codigo ?: ""
     edtNome.value = pedido?.cliente ?: ""
-    edtFoneCli.value = pedido?.telCliente ?: ""
+    edtFoneCli.value = pedido?.telClienteFormatado ?: ""
     dataProviderProdutos.items.clear()
     dataProviderProdutos.items.addAll(pedido?.produtos.orEmpty())
     dataProviderProdutos.refreshAll()
+    val total =
+      pedido?.produtos.orEmpty()
+        .sumByDouble {it.vlTotal}
+    labelTotal.html("Total R$ <b>${total.format()}</b>")
   }
   
-  override fun showRelatorio(byteArray: ByteArray) {
-    SubWindowPDF(byteArray).open()
+  override fun showRelatorio(pedido: Pedido, byteArray: ByteArray) {
+    val chave = "${pedido.sigla}_${pedido.numPedido}"
+    SubWindowPDF(chave, byteArray).open()
   }
   
-  override fun downloadPdf(byteArray: ByteArray) {
-  
+  override fun downloadPdf(pedido: Pedido, byteArray: ByteArray) {
   }
 }
