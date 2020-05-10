@@ -3,26 +3,19 @@ package br.com.astrosoft.pedidos.view.reports
 import br.com.astrosoft.framework.util.format
 import br.com.astrosoft.pedidos.model.beans.Pedido
 import br.com.astrosoft.pedidos.model.beans.ProdutoPedido
-import net.sf.dynamicreports.report.base.expression.AbstractSimpleExpression
-import net.sf.dynamicreports.report.builder.DynamicReports
 import net.sf.dynamicreports.report.builder.DynamicReports.cmp
 import net.sf.dynamicreports.report.builder.DynamicReports.col
 import net.sf.dynamicreports.report.builder.DynamicReports.report
 import net.sf.dynamicreports.report.builder.DynamicReports.sbt
+import net.sf.dynamicreports.report.builder.DynamicReports.stl
 import net.sf.dynamicreports.report.builder.DynamicReports.type
-import net.sf.dynamicreports.report.builder.DynamicReports.*
-import net.sf.dynamicreports.report.builder.VariableBuilder
 import net.sf.dynamicreports.report.builder.column.ColumnBuilder
 import net.sf.dynamicreports.report.builder.component.ComponentBuilder
-import net.sf.dynamicreports.report.builder.style.PenBuilder
 import net.sf.dynamicreports.report.builder.subtotal.SubtotalBuilder
-import net.sf.dynamicreports.report.constant.Calculation
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment.CENTER
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment.RIGHT
-import net.sf.dynamicreports.report.constant.ListType.HORIZONTAL_FLOW
 import net.sf.dynamicreports.report.constant.Position.LEFT
-import net.sf.dynamicreports.report.definition.ReportParameters
 import net.sf.dynamicreports.report.exception.DRException
 import java.io.ByteArrayOutputStream
 
@@ -122,23 +115,27 @@ class RelatorioPedido(val pedido: Pedido) {
               .setHorizontalTextAlignment(CENTER),
             cmp.horizontalList()
               .add(
-                cmp.text("Data/Hora:"),
-                cmp.text(pedido.data.format()),
-                cmp.text(pedido.hora.format()),
-                cmp.text("Vendedor:"),
+                cmp.text("Data/Hora:")
+                  .setFixedWidth(55),
+                cmp.text(pedido.data.format() + " às " + pedido.hora.format())
+                  .setFixedWidth(90),
+                cmp.text("Vendedor:")
+                  .setFixedWidth(55),
                 cmp.text(pedido.vendedor)
-                  .setFixedWidth(150),
-                cmp.text("Fone:"),
-                cmp.text(pedido.telVend)
+                  .setFixedWidth(155),
+                cmp.text("Fone:")
+                  .setFixedWidth(30),
+                cmp.text(pedido.telVendFormatado)
                   ),
             cmp.horizontalList()
               .add(
-                cmp.text("Cliente:"),
-                cmp.text(pedido.codigo),
-                cmp.text(pedido.cliente)
-                  .setFixedWidth(250),
-                cmp.text("Fone:"),
-                cmp.text(pedido.telCliente)
+                cmp.text("Cliente:")
+                  .setFixedWidth(55),
+                cmp.text(pedido.codigo + " " + pedido.cliente)
+                  .setFixedWidth(300),
+                cmp.text("Fone:")
+                  .setFixedWidth(30),
+                cmp.text(pedido.telClienteFormatado)
                   )
               )
           )
@@ -168,15 +165,5 @@ class RelatorioPedido(val pedido: Pedido) {
   
   init {
     build()
-  }
-}
-
-private class CustomTextSubtotal(private val total: VariableBuilder<Double>):
-  AbstractSimpleExpression<String?>() {
-  override fun evaluate(reportParameters: ReportParameters): String {
-    val totalValue = reportParameters.getValue(total)
-    
-    return "Valor total do Orçamento R$... " + type.doubleType()
-      .valueToString(total, reportParameters)
   }
 }
