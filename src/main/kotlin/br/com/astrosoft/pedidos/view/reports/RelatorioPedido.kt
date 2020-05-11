@@ -71,6 +71,7 @@ class RelatorioPedido(val pedido: Pedido) {
         .setDataSource(dataSource())
         .summary(pageFooterBuilder())
         .setSubtotalStyle(stl.style().setTopBorder(stl.pen1Point()))
+        .pageFooter(cmp.pageNumber().setHorizontalTextAlignment(RIGHT))
         .setTemplate(Templates.reportTemplate)
         .toPdf(outputStream)
       outputStream.toByteArray()
