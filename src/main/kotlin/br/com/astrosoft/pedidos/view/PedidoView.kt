@@ -20,6 +20,7 @@ import com.github.mvysny.karibudsl.v10.onLeftClick
 import com.github.mvysny.karibudsl.v10.responsiveSteps
 import com.github.mvysny.karibudsl.v10.textAlign
 import com.github.mvysny.karibudsl.v10.textField
+import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.dependency.HtmlImport
 import com.vaadin.flow.component.grid.ColumnTextAlign.END
 import com.vaadin.flow.component.grid.Grid
@@ -69,7 +70,7 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
           viewModel.preview()
         }
       }
-      button("Baixar"){
+      button("Baixar") {
         icon = VaadinIcon.DOWNLOAD.create()
         isVisible = false
         onLeftClick {
@@ -154,56 +155,77 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
       }
     }
     gridProduto = grid(dataProvider = dataProviderProdutos) {
-      isExpand = true
-      isMultiSort = true
+      //isExpand = false
+      this.setWidthFull()
       addThemeVariants(LUMO_COMPACT)
       setSelectionMode(SelectionMode.SINGLE)
-  
+      
       labelTotal = Label().apply {
         this.textAlign = "right"
       }
-  
+      
       addColumnFor(ProdutoPedido::codigo) {
         setHeader("Código")
         flexGrow = 1
         this.textAlign = END
+        isSortable = false
       }
       addColumnFor(ProdutoPedido::descricao) {
         setHeader("Descrição")
         flexGrow = 8
+        isSortable = false
       }
       addColumnFor(ProdutoPedido::grade) {
         setHeader("Grade")
         flexGrow = 1
+        isSortable = false
       }
       addColumnFor(ProdutoPedido::un) {
         setHeader("Un")
         flexGrow = 1
+        isSortable = false
       }
-      
       addColumnFor(ProdutoPedido::qtd, NumberRenderer(ProdutoPedido::qtd, DecimalFormat("0.###"))) {
         setHeader("Qtd")
         flexGrow = 1
         this.textAlign = END
+        isSortable = false
       }
       addColumnFor(ProdutoPedido::vlUnit, NumberRenderer(ProdutoPedido::vlUnit, DecimalFormat("0.00"))) {
         setHeader("R$ Unit")
         flexGrow = 1
         this.textAlign = END
+        isSortable = false
       }
       addColumnFor(ProdutoPedido::vlTotal, NumberRenderer(ProdutoPedido::vlTotal, DecimalFormat("0.00"))) {
         setHeader("R$ Total")
         flexGrow = 1
         this.textAlign = END
         this.setFooter(labelTotal)
+        isSortable = false
       }
-      
-      sort(listOf(
-        GridSortOrder(getColumnBy(ProdutoPedido::codigo), ASCENDING),
-        GridSortOrder(getColumnBy(ProdutoPedido::grade), ASCENDING)
-                 ))
     }
-    toolbar {
+    UI.getCurrent().page.addBrowserWindowResizeListener {
+      resize(it.width)
+    }
+    UI.getCurrent()
+      .page
+      .retrieveExtendedClientDetails {receiver ->
+        val width = receiver.windowInnerWidth
+        resize(width)
+      }
+  }
+  
+  private fun resize(width: Int) {
+    if(width > 500) {
+      gridProduto.isExpand = true
+      gridProduto.setHeightFull()
+      this.height = "100%"
+    }
+    else {
+      gridProduto.isExpand = false
+      gridProduto.height = "500px"
+      this.height = null
     }
   }
   
