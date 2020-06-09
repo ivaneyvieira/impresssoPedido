@@ -30,7 +30,7 @@ abstract class ViewLayout<VM: ViewModel<*>>: VerticalLayout(), IView, BeforeLeav
   
   init {
     width = "100%"
-    height = "100%"
+   // height = "100%"
   }
   
   override fun showError(msg: String) {
