@@ -15,7 +15,7 @@ import java.io.InputStream
 class SubWindowPDF(chave: String, bytesBoletos: ByteArray): Dialog() {
   init {
     width = "1200px"
-    height = "500px"
+    height = "600px"
     val timeNumber = System.currentTimeMillis()
     val resourcePDF = StreamResource("${chave}_${timeNumber}.pdf", ConverteByte(bytesBoletos))
     //val buttonWrapper = FileDownloadWrapper(resourcePDF)

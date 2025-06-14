@@ -1,10 +1,11 @@
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val karibudsl_version = "0.7.4"
 
 plugins {
   kotlin("jvm") version "1.3.60"
-  id("org.gretty") version "2.3.1"
+  id("org.gretty") version "3.0.5"
   id("com.devsoap.vaadin-flow") version "1.2"
 }
 

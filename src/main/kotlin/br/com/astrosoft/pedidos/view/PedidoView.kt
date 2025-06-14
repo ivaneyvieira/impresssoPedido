@@ -7,25 +7,12 @@ import br.com.astrosoft.pedidos.model.beans.Pedido
 import br.com.astrosoft.pedidos.model.beans.ProdutoPedido
 import br.com.astrosoft.pedidos.viewmodel.IPedidoView
 import br.com.astrosoft.pedidos.viewmodel.PedidoViewModel
-import com.github.mvysny.karibudsl.v10.addColumnFor
-import com.github.mvysny.karibudsl.v10.button
-import com.github.mvysny.karibudsl.v10.formItem
-import com.github.mvysny.karibudsl.v10.getColumnBy
-import com.github.mvysny.karibudsl.v10.grid
-import com.github.mvysny.karibudsl.v10.horizontalLayout
-import com.github.mvysny.karibudsl.v10.html
-import com.github.mvysny.karibudsl.v10.integerField
-import com.github.mvysny.karibudsl.v10.isExpand
-import com.github.mvysny.karibudsl.v10.onLeftClick
-import com.github.mvysny.karibudsl.v10.responsiveSteps
-import com.github.mvysny.karibudsl.v10.textAlign
-import com.github.mvysny.karibudsl.v10.textField
+import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.dependency.HtmlImport
 import com.vaadin.flow.component.grid.ColumnTextAlign.END
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.Grid.SelectionMode
-import com.vaadin.flow.component.grid.GridSortOrder
 import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -33,7 +20,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.provider.ListDataProvider
-import com.vaadin.flow.data.provider.SortDirection.ASCENDING
 import com.vaadin.flow.data.renderer.NumberRenderer
 import com.vaadin.flow.data.value.ValueChangeMode.EAGER
 import com.vaadin.flow.router.PageTitle
@@ -46,7 +32,7 @@ import java.text.DecimalFormat
 @Theme(value = Lumo::class, variant = Lumo.DARK)
 @PageTitle("Editar")
 @HtmlImport("frontend://styles/shared-styles.html")
-class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
+class PedidoView : ViewLayout<PedidoViewModel>(), IPedidoView {
   private lateinit var labelTotal: Label
   private lateinit var edtFoneCli: TextField
   private lateinit var edtNome: TextField
@@ -61,7 +47,7 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
   private lateinit var edtPedido: IntegerField
   override val viewModel: PedidoViewModel = PedidoViewModel(this)
   private val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
-  
+
   init {
     val toolBar = HorizontalLayout().apply {
       button("Visualizar") {
@@ -96,15 +82,15 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
         edtPedido = integerField() {
           width = "8em"
           valueChangeMode = EAGER
-          addValueChangeListener {event ->
-            if(event.isFromClient) {
+          addValueChangeListener { event ->
+            if (event.isFromClient) {
               val numPedido = event.value
               viewModel.updateGrid(numLoja, numPedido)
             }
           }
         }
       }
-      
+
       formItem("Data Hora") {
         colspan = 2
         horizontalLayout {
@@ -159,11 +145,11 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
       this.setWidthFull()
       addThemeVariants(LUMO_COMPACT)
       setSelectionMode(SelectionMode.SINGLE)
-      
+
       labelTotal = Label().apply {
         this.textAlign = "right"
       }
-      
+
       addColumnFor(ProdutoPedido::codigo) {
         setHeader("Código")
         flexGrow = 1
@@ -197,6 +183,12 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
         this.textAlign = END
         isSortable = false
       }
+      addColumnFor(ProdutoPedido::vlDesconto, NumberRenderer(ProdutoPedido::vlDesconto, DecimalFormat("0.00"))) {
+        setHeader("R$ Desconto")
+        flexGrow = 1
+        this.textAlign = END
+        isSortable = false
+      }
       addColumnFor(ProdutoPedido::vlTotal, NumberRenderer(ProdutoPedido::vlTotal, DecimalFormat("0.00"))) {
         setHeader("R$ Total")
         flexGrow = 1
@@ -210,32 +202,31 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
     }
     UI.getCurrent()
       .page
-      .retrieveExtendedClientDetails {receiver ->
+      .retrieveExtendedClientDetails { receiver ->
         val width = receiver.windowInnerWidth
         resize(width)
       }
   }
-  
+
   private fun resize(width: Int) {
-    if(width > 500) {
+    if (width > 500) {
       gridProduto.isExpand = true
       gridProduto.setHeightFull()
       this.height = "100%"
-    }
-    else {
+    } else {
       gridProduto.isExpand = false
       gridProduto.height = "500px"
       this.height = null
     }
   }
-  
+
   override val numPedido: Int
     get() = edtPedido.value ?: 0
   override val numLoja: Int
     get() = edtLoja.value ?: 0
   override val produtos: List<ProdutoPedido>
     get() = dataProviderProdutos.items.toList()
-  
+
   override fun updateGrid(pedido: Pedido?) {
     edtData.value = pedido?.data.format()
     edtHora.value = pedido?.hora.format()
@@ -249,15 +240,15 @@ class PedidoView: ViewLayout<PedidoViewModel>(), IPedidoView {
     dataProviderProdutos.refreshAll()
     val total =
       pedido?.produtos.orEmpty()
-        .sumByDouble {it.vlTotal}
+        .sumByDouble { it.vlTotal }
     labelTotal.html("Total R$ <b>${total.format()}</b>")
   }
-  
+
   override fun showRelatorio(pedido: Pedido, byteArray: ByteArray) {
     val chave = "${pedido.sigla}_${pedido.numPedido}"
     SubWindowPDF(chave, byteArray).open()
   }
-  
+
   override fun downloadPdf(pedido: Pedido, byteArray: ByteArray) {
   }
 }
